@@ -1,0 +1,114 @@
+[tool.poetry]
+name = "books"
+version = "0.1.0"
+description = "Example FastAPI project"
+authors = ["Przemysław Różycki <przemyslaw.rozycki@codecaptains.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.95.2"
+uvicorn = {extras = ["standard"], version = "^0.22.0"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+freezegun = "^1.2.2"
+httpx = "^0.24.1"
+ruff = "^0.0.262"
+mypy = "^1.2.0"
+isort = "^5.12.0"
+black = "^23.3.0"
+poetry = "^1.4.2"
+poethepoet = "^0.19.0"
+pytest-cov = "^4.1.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+select = ["ALL"]
+ignore = [
+    "D", # pydocstyle
+    "DJ", # flake8-django
+    "ANN101", # Missing type annotation for `self` `cls` in method
+    "N805", # First argument of a method should be named `self`
+    "EM101", # Exception must not use a string literal, assign to variable first
+    "TRY003", # Avoid specifying long messages outside the exception class
+    "ANN102", # Missing type annotation for `cls` in classmethod
+    "EM102", # Exception must not use an f-string literal, assign to variable first
+    "A003", # Class attribute `type` is shadowing a python builtin
+]
+fixable = ["ALL"]
+unfixable = []
+line-length = 89
+target-version = "py311"
+exclude = ["tests/"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["E402", "F401"]
+
+[tool.black]
+line-length = 89
+target-version = ['py311']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.eggs
+  | \.git
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | cdk.out
+  | dist
+  | venv
+  | alembic
+  | temp
+)/
+'''
+
+[tool.isort]
+line_length = 89
+multi_line_output = 3
+profile = "black"
+
+[tool.mypy]
+plugins = "pydantic.mypy"
+python_version = "3.11"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+console_output_style = "count"
+addopts = "-p no:warnings"
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "*/setup.py",
+    "*/__init__.py",
+    "*/conftest.py",
+    "*/utils/*",
+    "*/alembic/*"
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "def __str__",
+    "if TYPE_CHECKING"
+]
+
+[tool.poe.tasks]
+# programmer commands
+test = "pytest --cov=books tests/"
+lint = "ruff check . --fix --exit-non-zero-on-fix"
+type_check = "mypy ."
+format = { shell = "black . && isort ."}
+
+# pre-commit commands
+pre_commit_type_check = "mypy"

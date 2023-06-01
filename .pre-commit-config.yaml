@@ -1,0 +1,26 @@
+exclude: "pyproject.toml|poetry.lock|temp|.pre-commit-config.yaml|alembic|docker-compose.yaml"
+repos:
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.262'
+    hooks:
+      - id: ruff
+        args: [ --fix, --exit-non-zero-on-fix ]
+
+  - repo: local
+    hooks:
+      - id: format
+        name: format
+        language: python
+        entry: bash -c 'poe format; git add -u'
+        types: [ file, text ]
+        files: \.(ipynb|py)$
+        require_serial: true
+
+      - id: mypy
+        name: mypy
+        entry: poe pre_commit_type_check
+        language: python
+        types: [ file, text ]
+        files: \.(ipynb|py)$
+        require_serial: true
+        exclude: "tests/"
