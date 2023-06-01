@@ -60,6 +60,6 @@ stages:
       azureDevOpsEnv: 'STAGING'
       helmArtifactName: '$(helmArtifactName)'
       kubernetesServiceConnection: 'LINODE-K8S'
-      kubernetesNamespace: 'non-prod'
       helmValuesFile: 'staging.yaml'
       stageDependsOn: ['BuildImages']
+      chartName: 'books'

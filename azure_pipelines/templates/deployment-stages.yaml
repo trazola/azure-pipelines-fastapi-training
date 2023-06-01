@@ -11,10 +11,10 @@ parameters:
   - name: kubernetesServiceConnection
     type: string
 
-  - name: kubernetesNamespace
+  - name: helmValuesFile
     type: string
 
-  - name: helmValuesFile
+  - name: chartName
     type: string
 
   - name: buildDockerStageName
@@ -80,8 +80,8 @@ stages:
                   inputs:
                     connectionType: 'Kubernetes Service Connection'
                     kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
-                    namespace: ${{ parameters.kubernetesNamespace }}
                     command: 'upgrade'
                     chartType: 'FilePath'
+                    chartName: ${{ parameters.chartName }}
                     chartPath: '$(Pipeline.Workspace)/$(chartPath)'
                     valueFile: '$(Pipeline.Workspace)/$(chartPath)/values/${{ parameters.helmValuesFile }}'
