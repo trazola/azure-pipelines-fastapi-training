@@ -36,7 +36,7 @@ stages:
         succeeded(),
         in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
       )
-    dependsOn: [TestingStrategy, PreBuild]
+    dependsOn: [TestingStrategy, Prepare]
     jobs:
       - template: templates/build-docker-image-jobs.yaml
         parameters:
