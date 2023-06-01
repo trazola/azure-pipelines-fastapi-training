@@ -2,6 +2,29 @@ parameters:
   - name: env
     type: string
 
+  - name: azureDevOpsEnv
+    type: string
+
+  - name: helmArtifactName
+    type: string
+
+  - name: kubernetesServiceConnection
+    type: string
+
+  - name: kubernetesNamespace
+    type: string
+
+  - name: helmValuesFile
+    type: string
+
+  - name: buildDockerStageName
+    type: string
+    default: "BuildImages"
+
+  - name: buildDockerJobName
+    type: string
+    default: "BuildAppImage"
+
   - name: stageCondition
     type: string
     default: |
@@ -10,17 +33,55 @@ parameters:
         in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
       )
 
+  - name: stageDependsOn
+    type: object
+    default: []
+
 
 stages:
   - stage: ${{ parameters.env }}
     condition: ${{ parameters.stageCondition }}
+    dependsOn: ${{ parameters.stageDependsOn }}
     pool:
       vmImage: 'ubuntu-latest'
+    variables:
+      chartPath: '${{ parameters.helmArtifact }}/chart'
+      fullImageNameAndTag: $[ stageDependencies.${{ parameters.buildDockerStageName }}.${{ parameters.buildDockerJobName }}.outputs['setFullImageNameAndTag.fullImageNameAndTag'] ]
     jobs:
       - deployment: ${{ parameters.dataCenter }}
-        environment: ${{ parameters.targetEnv }}
+        environment: ${{ parameters.azureDevOpsEnv }}
         strategy:
           runOnce:
             deploy:
               steps:
                 - download: none
+
+                - task: DownloadPipelineArtifact@2
+                  displayName: Download Helm artifact
+                  inputs:
+                    patterns: ${{ parameters.helmArtifact }}/**
+
+                - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+                  displayName: Replace values in files
+                  inputs:
+                    rootDirectory: $(Pipeline.Workspace)
+                    targetFiles: |
+                      $(chartPath)/values/${{ parameters.helmValuesFile }}
+                    encoding: auto
+                    writeBOM: true
+                    actionOnMissing: fail
+                    keepToken: false
+                    tokenPrefix: '#{'
+                    tokenSuffix: '}#'
+                    useLegacyPattern: false
+                    enableTelemetry: true
+
+                - task: HelmDeploy@0
+                  inputs:
+                    connectionType: 'Kubernetes Service Connection'
+                    kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                    namespace: ${{ parameters.kubernetesNamespace }}
+                    command: 'upgrade'
+                    chartType: 'FilePath'
+                    chartPath: '$(Pipeline.Workspace)/$(chartPath)'
+                    valueFile: '$(Pipeline.Workspace)/$(chartPath)/values/${{ parameters.helmValuesFile }}'

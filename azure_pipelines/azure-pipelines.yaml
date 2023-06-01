@@ -4,12 +4,17 @@ trigger:
       - 'master'
       - 'main'
 
+
+variables:
+  helmArtifactName: 'helm'
+
+
 stages:
   - template: templates/testing-strategy-stages.yaml
 
-  - stage: PreBuild
+  - stage: Prepare
     jobs:
-      - job: CopyHelmChart
+      - job: PrepareHelmChart
         steps:
           - task: CopyFiles@2
             inputs:
@@ -23,7 +28,7 @@ stages:
           - task: PublishBuildArtifacts@1
             inputs:
               pathToPublish: '$(Build.ArtifactStagingDirectory)'
-              artifactName: helm_chart
+              artifactName: '$(helmArtifactName)'
 
   - stage: BuildImages
     condition: |
@@ -48,3 +53,13 @@ stages:
           dockerHubRepo: trazola/books
           dockerfilePath: dockerfiles/Dockerfile
           jobDependsOn: BuildBaseImage
+
+  - template: templates/deployment-stages.yaml
+    parameters:
+      env: 'STAGING'
+      azureDevOpsEnv: 'STAGING'
+      helmArtifactName: '$(helmArtifactName)'
+      kubernetesServiceConnection: 'LINODE-K8S'
+      kubernetesNamespace: 'non-prod'
+      helmValuesFile: 'staging.yaml'
+      stageDependsOn: ['BuildImages']
