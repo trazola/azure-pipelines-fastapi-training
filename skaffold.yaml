@@ -28,3 +28,4 @@ portForward:
     port: 8000
     address: 0.0.0.0
     localPort: 8000
+    namespace: local
