@@ -7,17 +7,26 @@ trigger:
 stages:
   - template: templates/testing-strategy-stages.yaml
 
-  - template: templates/build-docker-image-stages.yaml
-    parameters:
-      dockerHubCR: TRAZOLA-DOCKER
-      dockerHubRepo: trazola/generic_images
-      dockerImageTag: python3.11-slim-bullseye
-      dockerfilePath: dockerfiles/base.Dockerfile
-      stageCondition: |
-        and(
-          always(),
-          in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
-        )
-      
-      
+  - stage: BuildImages
+    condition: |
+      and(
+        succeeded(),
+        in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
+      )
+    dependsOn: TestingStrategy
+    jobs:
+      - template: templates/build-docker-image-jobs.yaml
+        parameters:
+          jobName: BuildBaseImage
+          dockerHubCR: TRAZOLA-DOCKER
+          dockerHubRepo: trazola/generic_images
+          dockerImageTag: python3.11-slim-bullseye
+          dockerfilePath: dockerfiles/base.Dockerfile
 
+      - template: templates/build-docker-image-jobs.yaml
+        parameters:
+          jobName: BuildAppImage
+          dockerHubCR: TRAZOLA-DOCKER
+          dockerHubRepo: trazola/books
+          dockerfilePath: dockerfiles/Dockerfile
+          dependsOn: BuildBaseImage

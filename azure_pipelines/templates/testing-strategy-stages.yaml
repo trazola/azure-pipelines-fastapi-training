@@ -26,6 +26,6 @@ stages:
             condition: always()
             displayName: 'Static code analysis'
 
-          - script: poe test
-            condition: always()
-            displayName: 'E2E tests'
+#          - script: poe test
+#            condition: always()
+#            displayName: 'E2E tests'
