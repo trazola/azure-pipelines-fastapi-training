@@ -15,7 +15,7 @@ hpa:
 
 image:
   url: books
-  imagePullPolicy: Never
+  pullPolicy: Never
 
 deployment:
   rollingUpdate:
