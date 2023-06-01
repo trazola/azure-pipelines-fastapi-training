@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  books-api:
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile
+      args:
+        PRD_REQUIREMENTS: "N"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./books:/app/books
+      - ./tests:/app/tests
+      - ./pyproject.toml:/app/pyproject.toml
+    restart: on-failure
+

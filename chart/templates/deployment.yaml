@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Chart.Name }}-deploy
+  namespace: {{ .Values.application.env }}
+  labels:
+    module: {{ .Chart.Name }}
+    env: {{ .Values.application.env }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      module: {{ .Chart.Name }}
+      env: {{ .Values.application.env }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ .Values.deployment.rollingUpdate.maxSurge }}
+      maxUnavailable: {{ .Values.deployment.rollingUpdate.maxUnavailable }}
+  template:
+    metadata:
+      labels:
+        module: {{ .Chart.Name }}
+        env: {{ .Values.application.env }}
+        ndi: {{ .Values.application.ndi }}
+    spec:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - name: {{ .Chart.Name }}-container
+          image: {{ .Values.image.url }}
+          stdin: true
+          tty: true
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "Always" | quote }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Chart.Name }}-config-map
+          resources:
+            limits:
+              cpu: {{ .Values.deployment.resources.limits.cpu }}
+              memory: {{ .Values.deployment.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.deployment.resources.requests.cpu }}
+              memory: {{ .Values.deployment.resources.requests.memory }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.deployment.probe.path }}
+              port: {{ .Values.apiService.appPort }}
+              scheme: {{ .Values.deployment.probe.scheme }}
+            initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.deployment.probe.path }}
+              port: {{ .Values.service.appPort }}
+              scheme: {{ .Values.deployment.probe.scheme }}
+            initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
+            successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.deployment.probe.path }}
+              port: {{ .Values.service.appPort }}
+              scheme: {{ .Values.deployment.probe.scheme }}
+            initialDelaySeconds: {{ .Values.deployment.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.startupProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.deployment.startupProbe.timeoutSeconds }}
+            failureThreshold: {{ .Values.deployment.startupProbe.failureThreshold }}

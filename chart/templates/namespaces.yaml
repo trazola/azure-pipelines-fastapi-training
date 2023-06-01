@@ -1,0 +1,8 @@
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: {{ .Values.application.env }}
+  labels:
+    module: {{ .Chart.Name }}
+    env: {{ .Values.application.env }}
