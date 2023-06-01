@@ -1,6 +1,7 @@
 application:
   env: "DEVELOPMENT"
   version: 0.1.0
+  domain: localhost
 
 namespace: local
 

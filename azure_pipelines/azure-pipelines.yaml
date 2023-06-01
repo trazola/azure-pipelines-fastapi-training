@@ -64,3 +64,14 @@ stages:
       stageDependsOn: ['BuildImages']
       chartName: 'books'
       kubernetesNamespace: non-prod
+
+  - template: templates/deployment-stages.yaml
+    parameters:
+      env: 'PRODUCTION'
+      azureDevOpsEnv: 'PRODUCTION'
+      helmArtifactName: '$(helmArtifactName)'
+      kubernetesServiceConnection: 'LINODE-K8S'
+      helmValuesFile: 'production.yaml'
+      stageDependsOn: ['BuildImages', 'STAGING']
+      chartName: 'books'
+      kubernetesNamespace: prod

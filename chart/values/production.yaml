@@ -1,6 +1,7 @@
 application:
   env: "PRODUCTION"
   version: #{Build.BuildId}#
+  domain: trazola.com
 
 namespace: prod
 
