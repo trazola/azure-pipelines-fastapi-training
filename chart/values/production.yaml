@@ -22,8 +22,8 @@ deployment:
     maxSurge: 1
   resources:
     limits:
-      cpu: 600m
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi
     requests:
       cpu: 50m
       memory: 128Mi

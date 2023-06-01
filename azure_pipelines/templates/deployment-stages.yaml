@@ -1,0 +1,26 @@
+parameters:
+  - name: env
+    type: string
+
+  - name: stageCondition
+    type: string
+    default: |
+      and(
+        succeeded(),
+        in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
+      )
+
+
+stages:
+  - stage: ${{ parameters.env }}
+    condition: ${{ parameters.stageCondition }}
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - deployment: ${{ parameters.dataCenter }}
+        environment: ${{ parameters.targetEnv }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - download: none

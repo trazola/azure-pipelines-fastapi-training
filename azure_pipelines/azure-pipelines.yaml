@@ -7,13 +7,31 @@ trigger:
 stages:
   - template: templates/testing-strategy-stages.yaml
 
+  - stage: PreBuild
+    jobs:
+      - job: CopyHelmChart
+        steps:
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: '.'
+              contents: |
+                chart/templates/**
+                chart/values/**
+                chart/Chart.yaml
+              targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(Build.ArtifactStagingDirectory)'
+              artifactName: helm_chart
+
   - stage: BuildImages
     condition: |
       and(
         succeeded(),
         in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
       )
-    dependsOn: TestingStrategy
+    dependsOn: [TestingStrategy, PreBuild]
     jobs:
       - template: templates/build-docker-image-jobs.yaml
         parameters:
