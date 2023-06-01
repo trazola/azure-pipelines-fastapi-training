@@ -37,6 +37,9 @@ parameters:
     type: object
     default: []
 
+  - name: kubernetesNamespace
+    type: 'string'
+
 
 stages:
   - stage: ${{ parameters.env }}
@@ -85,3 +88,31 @@ stages:
                     chartName: ${{ parameters.chartName }}
                     chartPath: '$(Pipeline.Workspace)/$(chartPath)'
                     valueFile: '$(Pipeline.Workspace)/$(chartPath)/values/${{ parameters.helmValuesFile }}'
+            on:
+              success:
+                steps:
+                  - task: HelmDeploy@0
+                    inputs:
+                      connectionType: 'Kubernetes Service Connection'
+                      kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                      command: 'repo add'
+                      chartType: 'Name'
+                      chartName: 'ingress-nginx'
+                      repository: 'https://kubernetes.github.io/ingress-nginx'
+                      namespace: ${{ parameters.kubernetesNamespace }}
+
+                  - task: HelmDeploy@0
+                    inputs:
+                      connectionType: 'Kubernetes Service Connection'
+                      kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                      command: 'repo update'
+                      namespace: ${{ parameters.kubernetesNamespace }}
+
+                  - task: HelmDeploy@0
+                    inputs:
+                      connectionType: 'Kubernetes Service Connection'
+                      kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                      command: 'install'
+                      chartType: 'Name'
+                      chartName: 'ingress-nginx/ingress-nginx'
+                      releaseName: 'ingress-nginx'
