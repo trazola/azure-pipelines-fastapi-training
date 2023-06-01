@@ -16,7 +16,7 @@ stages:
       stageCondition: |
         and(
           always(),
-          in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master')
+          in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master', 'refs/heads/develop')
         )
       
       

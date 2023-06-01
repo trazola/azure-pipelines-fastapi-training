@@ -25,9 +25,13 @@ parameters:
     type: object
     default: []
 
+  - name: stageName
+    type: string
+    default: 'BuildDockerImage'
+
 
 stages:
-  - stage: BuildDockerImage
+  - stage: ${{ parameters.stageName }}
     condition: ${{ parameters.stageCondition }}
     variables:
       dockerImagePath: ${{ parameters.dockerHubRepo }}:${{ parameters.dockerImageTag }}
@@ -57,4 +61,3 @@ stages:
               buildContext: ${{ parameters.dockerBuildContext }}
               tags: ${{ parameters.dockerImageTag }}
               containerRegistry: ${{ parameters.dockerHubCR }}
-
