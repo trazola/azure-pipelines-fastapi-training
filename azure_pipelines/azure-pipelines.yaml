@@ -29,4 +29,4 @@ stages:
           dockerHubCR: TRAZOLA-DOCKER
           dockerHubRepo: trazola/books
           dockerfilePath: dockerfiles/Dockerfile
-          dependsOn: BuildBaseImage
+          jobDependsOn: BuildBaseImage
