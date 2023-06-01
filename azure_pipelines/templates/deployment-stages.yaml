@@ -45,10 +45,10 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     variables:
-      chartPath: '${{ parameters.helmArtifact }}/chart'
+      chartPath: '${{ parameters.helmArtifactName }}/chart'
       fullImageNameAndTag: $[ stageDependencies.${{ parameters.buildDockerStageName }}.${{ parameters.buildDockerJobName }}.outputs['setFullImageNameAndTag.fullImageNameAndTag'] ]
     jobs:
-      - deployment: ${{ parameters.dataCenter }}
+      - deployment: Linode
         environment: ${{ parameters.azureDevOpsEnv }}
         strategy:
           runOnce:
@@ -59,7 +59,7 @@ stages:
                 - task: DownloadPipelineArtifact@2
                   displayName: Download Helm artifact
                   inputs:
-                    patterns: ${{ parameters.helmArtifact }}/**
+                    patterns: ${{ parameters.helmArtifactName }}/**
 
                 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
                   displayName: Replace values in files
