@@ -63,3 +63,4 @@ stages:
       helmValuesFile: 'staging.yaml'
       stageDependsOn: ['BuildImages']
       chartName: 'books'
+      kubernetesNamespace: non-prod

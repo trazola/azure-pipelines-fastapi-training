@@ -116,3 +116,4 @@ stages:
                       chartType: 'Name'
                       chartName: 'ingress-nginx/ingress-nginx'
                       releaseName: 'ingress-nginx'
+                      namespace: ${{ parameters.kubernetesNamespace }}
