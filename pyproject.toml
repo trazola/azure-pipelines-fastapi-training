@@ -107,6 +107,7 @@ exclude_lines = [
 # programmer commands
 test = "pytest --cov=books tests/"
 lint = "ruff check . --fix --exit-non-zero-on-fix"
+lint_without_fix = "ruff check ."
 type_check = "mypy ."
 format = { shell = "black . && isort ."}
 

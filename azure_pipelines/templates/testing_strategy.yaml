@@ -1,0 +1,32 @@
+stages:
+  - stage: TestingStrategy
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: AppStrategy
+        steps:
+          - task: UsePythonVersion@0
+            displayName: 'Set python ver. 3.11'
+            inputs:
+              versionSpec: '3.11'
+              addToPath: true
+
+          - script: curl -sSL https://install.python-poetry.org | python3 -
+            displayName: 'Install Poetry'
+
+          - script: |
+              python -m pip install --upgrade pip
+              poetry config virtualenvs.create false
+              poetry install --with dev
+            displayName: 'Install app dependencies'
+
+          - script: poe type_check
+            displayName: 'Type check'
+
+          - script: poe lint_without_fix
+            condition: always()
+            displayName: 'Static code analysis'
+
+          - script: poe test
+            condition: always()
+            displayName: 'E2E tests'
