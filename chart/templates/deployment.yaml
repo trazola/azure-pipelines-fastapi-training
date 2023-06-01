@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Chart.Name }}-deploy
-  namespace: {{ .Values.application.env }}
+  namespace: {{ .Values.namespace }}
   labels:
     module: {{ .Chart.Name }}
     env: {{ .Values.application.env }}
@@ -20,10 +20,10 @@ spec:
       maxUnavailable: {{ .Values.deployment.rollingUpdate.maxUnavailable }}
   template:
     metadata:
+      namespace: {{ .Values.namespace }}
       labels:
         module: {{ .Chart.Name }}
         env: {{ .Values.application.env }}
-        ndi: {{ .Values.application.ndi }}
     spec:
       dnsPolicy: ClusterFirst
       restartPolicy: Always
@@ -46,7 +46,7 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.deployment.probe.path }}
-              port: {{ .Values.apiService.appPort }}
+              port: {{ .Values.service.appPort }}
               scheme: {{ .Values.deployment.probe.scheme }}
             initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
             periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}

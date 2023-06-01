@@ -2,6 +2,8 @@ application:
   env: "PRODUCTION"
   version: #{Build.BuildId}#
 
+namespace: prod
+
 service:
   servicePort: 8000
   appPort: 8000
@@ -11,7 +13,7 @@ hpa:
   maxReplicas: 2
   targetCPUUtilizationPercentage: 60
 
-apiImage:
+image:
   url: "#{fullImageNameAndTag}#"
 
 deployment:

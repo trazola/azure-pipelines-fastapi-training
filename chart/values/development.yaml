@@ -1,8 +1,8 @@
 application:
-  env: "STAGING"
-  version: #{Build.BuildId}#
+  env: "DEVELOPMENT"
+  version: 0.1.0
 
-namespace: non-prod
+namespace: local
 
 service:
   servicePort: 8000
@@ -14,7 +14,8 @@ hpa:
   targetCPUUtilizationPercentage: 60
 
 image:
-  url: "#{fullImageNameAndTag}#"
+  url: books
+  imagePullPolicy: Never
 
 deployment:
   rollingUpdate:

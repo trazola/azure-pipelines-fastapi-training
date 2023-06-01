@@ -1,0 +1,30 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+build:
+  local:
+    push: false
+
+  tagPolicy:
+    sha256: {}
+
+  artifacts:
+    - image: books
+      context: "."
+      docker:
+        dockerfile: dockerfiles/Dockerfile
+        noCache: false
+
+deploy:
+  helm:
+    releases:
+      - name: books
+        chartPath: chart
+        valuesFiles:
+          - chart/values/development.yaml
+
+portForward:
+  - resourceType: service
+    resourceName: books-svc
+    port: 8000
+    address: 0.0.0.0
+    localPort: 8000

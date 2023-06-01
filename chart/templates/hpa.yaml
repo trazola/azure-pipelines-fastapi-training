@@ -3,7 +3,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ .Chart.Name }}-hpa
-  namespace: {{ .Values.application.env }}
+  namespace: {{ .Values.namespace }}
   labels:
     module: {{ .Chart.Name }}
     env: {{ .Values.application.env }}

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: {{ .Chart.Name }}-config-map
-  namespace: {{ .Values.application.env }}
+  namespace: {{ .Values.namespace }}
   labels:
     module: {{ .Chart.Name }}
     env: {{ .Values.application.env }}

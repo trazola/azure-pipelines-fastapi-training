@@ -2,7 +2,7 @@
 kind: Namespace
 apiVersion: v1
 metadata:
-  name: {{ .Values.application.env }}
+  name: {{ .Values.namespace }}
   labels:
     module: {{ .Chart.Name }}
     env: {{ .Values.application.env }}
