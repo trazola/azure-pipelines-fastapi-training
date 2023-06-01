@@ -1,4 +1,4 @@
-FROM trazola/generic_images:python3.11-slim-bullseye-mssql AS base
+FROM trazola/generic_images:python3.11-slim-bullseye AS base
 
 FROM base AS generate-package-requirements
 

@@ -1,0 +1,60 @@
+parameters:
+  - name: dockerHubCR
+    type: string
+
+  - name: dockerHubRepo
+    type: string
+
+  - name: dockerBuildContext
+    type: string
+    default: '.'
+
+  - name: dockerImageTag
+    type: string
+    default: $(Build.BuildNumber)
+
+  - name: dockerfilePath
+    type: string
+    default: 'Dockerfile'
+
+  - name: stageCondition
+    type: string
+    default: and(succeeded(), in(variables['Build.SourceBranch'], 'refs/heads/main', 'refs/heads/master'))
+
+  - name: stageDependsOn
+    type: object
+    default: []
+
+
+stages:
+  - stage: BuildDockerImage
+    condition: ${{ parameters.stageCondition }}
+    variables:
+      dockerImagePath: ${{ parameters.dockerHubRepo }}:${{ parameters.dockerImageTag }}
+    dependsOn: ${{ parameters.stageDependsOn }}
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: Builder
+        steps:
+          - script: |
+              echo "##vso[task.setvariable variable=dockerImagePath;isOutput=true]$(dockerImagePath)"
+            name: setDockerImagePath
+            displayName: "Set global 'dockerImagePath' var"
+
+          - task: Docker@2
+            displayName: 'Login to DockerHub'
+            inputs:
+              containerRegistry: ${{ parameters.dockerHubCR }}
+              command: login
+
+          - task: Docker@2
+            displayName: 'Build and push image to DockerHub'
+            inputs:
+              command: buildAndPush
+              repository: ${{ parameters.dockerHubRepo }}
+              Dockerfile: ${{ parameters.dockerfilePath }}
+              buildContext: ${{ parameters.dockerBuildContext }}
+              tags: ${{ parameters.dockerImageTag }}
+              containerRegistry: ${{ parameters.dockerHubCR }}
+

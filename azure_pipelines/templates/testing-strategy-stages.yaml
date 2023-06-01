@@ -9,7 +9,6 @@ stages:
             displayName: 'Set python ver. 3.11'
             inputs:
               versionSpec: '3.11'
-              addToPath: true
 
           - script: curl -sSL https://install.python-poetry.org | python3 -
             displayName: 'Install Poetry'
