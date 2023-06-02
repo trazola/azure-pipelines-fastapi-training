@@ -55,6 +55,32 @@ stages:
         environment: ${{ parameters.azureDevOpsEnv }}
         strategy:
           runOnce:
+            preDeploy:
+              steps:
+                - task: HelmInstaller@1
+                  displayName: Helm installer
+                  inputs:
+                    helmVersionToInstall: latest
+
+                - script: |
+                    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+                  displayName: 'Add Helm repo'
+
+                - script: |
+                    helm repo update
+                  displayName: 'Update Helm repo'
+
+                - task: HelmDeploy@0
+                  inputs:
+                    connectionType: 'Kubernetes Service Connection'
+                    kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                    command: 'upgrade'
+                    chartType: 'Name'
+                    chartName: 'ingress-nginx/ingress-nginx'
+                    releaseName: 'ingress-nginx-${{ lower(parameters.env) }}'
+                    namespace: ${{ parameters.kubernetesNamespace }}
+                    install: true
+                    arguments: '--wait'
             deploy:
               steps:
                 - download: none
@@ -91,31 +117,3 @@ stages:
                     install: true
                     arguments: '--wait'
                     releaseName: ${{ parameters.chartName }}-${{ lower(parameters.env) }}
-
-            on:
-              success:
-                steps:
-                  - task: HelmInstaller@1
-                    displayName: Helm installer
-                    inputs:
-                      helmVersionToInstall: latest
-
-                  - script: |
-                      helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-                    displayName: 'Add Helm repo'
-
-                  - script: |
-                      helm repo update
-                    displayName: 'Update Helm repo'
-
-                  - task: HelmDeploy@0
-                    inputs:
-                      connectionType: 'Kubernetes Service Connection'
-                      kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
-                      command: 'upgrade'
-                      chartType: 'Name'
-                      chartName: 'ingress-nginx/ingress-nginx'
-                      releaseName: 'ingress-nginx-${{ lower(parameters.env) }}'
-                      namespace: ${{ parameters.kubernetesNamespace }}
-                      install: true
-                      arguments: '--wait'
