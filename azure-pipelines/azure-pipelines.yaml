@@ -11,7 +11,7 @@ stages:
     condition: |
       and(
         succeeded(),
-        in(variables['Build.SourceBranch'], 'master', 'main')
+        in(variables['Build.SourceBranch'], 'refs/head/master', 'refs/head/main')
       )
     dependsOn: ['TestingStrategy']
     jobs:
