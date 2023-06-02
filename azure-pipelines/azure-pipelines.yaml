@@ -61,3 +61,6 @@ stages:
       stageDependsOn: ['BuildImages']
       helmArtifactName: '$(helmArtifactName)'
       helmValuesFile: 'staging.yaml'
+      kubernetesServiceConnection: 'books-k8s-cluster'
+      kubernetesNamespace: 'non-prod'
+      helmChartName: 'books'

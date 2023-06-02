@@ -31,6 +31,15 @@ parameters:
   - name: helmValuesFile
     type: string
 
+  - name: kubernetesServiceConnection
+    type: string
+
+  - name: kubernetesNamespace
+    type: string
+
+  - name: helmChartName
+    type: string
+
 
 stages:
   - stage: ${{ parameters.env }}
@@ -69,3 +78,16 @@ stages:
                     useLegacyPattern: false
                     enableTelemetry: true
 
+                - task: HelmDeploy@0
+                  inputs:
+                    connectionType: 'Kubernetes Service Connection'
+                    kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                    namespace: ${{ parameters.kubernetesNamespace }}
+                    command: 'upgrade'
+                    chartType: 'FilePath'
+                    chartName: ${{ parameters.helmChartName }}
+                    chartPath: $(Pipeline.Workspace)/$(chartPath)
+                    releaseName: ${{ parameters.helmChartName }}
+                    valueFile: $(Pipeline.Workspace)/$(chartPath)/values/${{ parameters.helmValuesFile }}
+                    install: true
+                    arguments: "--wait"
