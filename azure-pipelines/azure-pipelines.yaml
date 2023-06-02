@@ -4,8 +4,31 @@ trigger:
       - 'master'
       - 'main'
 
+
+variables:
+  helmArtifactName: 'helm'
+
+
 stages:
   - template: template/testing-strategy.yaml
+
+  - stage: Prepare
+    jobs:
+      - job: HelmChart
+        steps:
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: "."
+              contents: |
+                chart/templates/**
+                chart/values/**
+                chart/Chart.yaml
+              targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: '$(helmArtifactName)'
 
   - stage: 'BuildImages'
     condition: |
