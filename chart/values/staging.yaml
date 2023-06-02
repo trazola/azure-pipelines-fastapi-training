@@ -48,5 +48,3 @@ deployment:
     failureThreshold: 30
     periodSeconds: 10
 
-ingress:
-  class: nginx-staging

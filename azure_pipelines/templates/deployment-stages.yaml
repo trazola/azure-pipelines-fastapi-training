@@ -77,10 +77,10 @@ stages:
                     command: 'upgrade'
                     chartType: 'Name'
                     chartName: 'ingress-nginx/ingress-nginx'
-                    releaseName: 'ingress-nginx-${{ lower(parameters.env) }}'
+                    releaseName: 'ingress-nginx'
                     namespace: ${{ parameters.kubernetesNamespace }}
                     install: true
-                    arguments: '--wait --set controller.ingressClass=nginx-${{ lower(parameters.env) }} --set controller.name=controller${{ lower(parameters.env) }}'
+                    arguments: '--wait'
 
             deploy:
               steps:
@@ -117,4 +117,5 @@ stages:
                     valueFile: '$(Pipeline.Workspace)/$(chartPath)/values/${{ parameters.helmValuesFile }}'
                     install: true
                     arguments: '--wait'
-                    releaseName: ${{ parameters.chartName }}-${{ lower(parameters.env) }}
+                    releaseName: ${{ parameters.chartName }}
+                    namespace: ${{ parameters.kubernetesNamespace }}
