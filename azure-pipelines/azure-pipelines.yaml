@@ -36,7 +36,7 @@ stages:
         succeeded(),
         in(variables['Build.SourceBranch'], 'refs/heads/master', 'refs/heads/main')
       )
-    dependsOn: ['TestingStrategy']
+    dependsOn: ['TestingStrategy', 'Prepare']
     jobs:
       - template: template/build-docker-image.yaml
         parameters:
@@ -53,3 +53,11 @@ stages:
           dockerRepository: 'trazola/books'
           dockerPath: 'dockerfiles/Dockerfile'
           jobDependsOn: ['BuildBaseImage']
+
+  - template: template/deployment.yaml
+    parameters:
+      env: 'STAGING'
+      azureDevOpsEnv: 'STAGING-ENV'
+      stageDependsOn: ['BuildImages']
+      helmArtifactName: '$(helmArtifactName)'
+      helmValuesFile: 'staging.yaml'
