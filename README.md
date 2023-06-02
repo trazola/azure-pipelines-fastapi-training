@@ -42,7 +42,7 @@ To use this project, you need Python 3.11 or higher.
 - `POST /books`: Create a new book.
 - `GET /books`: List all books.
 - `GET /books/{book_id}`: Retrieve a specific book by ID.
-- `DELETE /books`: Delete all books.
+- `DELETE /books/{book_id}`: Delete book.
 
 ## Testing
 
