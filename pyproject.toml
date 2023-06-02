@@ -105,7 +105,7 @@ exclude_lines = [
 
 [tool.poe.tasks]
 # programmer commands
-test = "pytest --cov=books tests/"
+test = "pytest --cov=books tests/ -xvv"
 lint = "ruff check . --fix --exit-non-zero-on-fix"
 lint_without_fix = "ruff check ."
 type_check = "mypy ."
