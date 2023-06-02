@@ -1,0 +1,8 @@
+trigger:
+  branches:
+    include:
+      - 'master'
+      - 'main'
+
+stages:
+  - template: template/testing-strategy.yaml

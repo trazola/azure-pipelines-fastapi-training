@@ -1,0 +1,30 @@
+stages:
+  - stage: TestingStrategy
+    pool:
+      vmImage: "ubuntu-latest"
+    jobs:
+      - job: StrategyRunner
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.11' # string. Required. Version spec. Default: 3.x.
+
+          - script: curl -sSL https://install.python-poetry.org | python3 -
+            displayName: 'Install poetry'
+
+          - script: |
+              python -m pip install --upgrade pip
+              poetry config virtualenvs.create false
+              poetry install --with dev
+            displayName: "Install app deps"
+
+          - script: poe type_check
+            displayName: "Type check"
+
+          - script: poe lint_without_fix
+            condition: always()
+            displayName: "Static code analysis"
+
+          - script: poe test
+            condition: always()
+            displayName: "E2E tests"
