@@ -56,29 +56,30 @@ stages:
         strategy:
           runOnce:
             preDeploy:
-              - task: HelmInstaller@1
-                inputs:
-                  helmVersionToInstall: 'latest'
+              steps:
+                - task: HelmInstaller@1
+                  inputs:
+                    helmVersionToInstall: 'latest'
 
-              - script: |
-                  helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-                displayName: 'Add helm repo'
+                - script: |
+                    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+                  displayName: 'Add helm repo'
 
-              - script: |
-                  helm repo update
-                displayName: 'Update helm repo'
+                - script: |
+                    helm repo update
+                  displayName: 'Update helm repo'
 
-              - task: HelmDeploy@0
-                inputs:
-                  connectionType: 'Kubernetes Service Connection'
-                  kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
-                  namespace: ${{ parameters.kubernetesNamespace }}
-                  command: 'upgrade'
-                  chartType: 'Name'
-                  chartName: 'ingress-nginx/ingress-nginx'
-                  releaseName: 'ingress-nginx'
-                  install: true
-                  arguments: "--wait"
+                - task: HelmDeploy@0
+                  inputs:
+                    connectionType: 'Kubernetes Service Connection'
+                    kubernetesServiceConnection: ${{ parameters.kubernetesServiceConnection }}
+                    namespace: ${{ parameters.kubernetesNamespace }}
+                    command: 'upgrade'
+                    chartType: 'Name'
+                    chartName: 'ingress-nginx/ingress-nginx'
+                    releaseName: 'ingress-nginx'
+                    install: true
+                    arguments: "--wait"
 
             deploy:
               steps:
