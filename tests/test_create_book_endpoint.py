@@ -21,7 +21,6 @@ def test_book_should_be_created_and_201_http_status_returned_when_payload_is_cor
     assert book["title"] == correct_book_payload.title
     assert book["author"] == correct_book_payload.author
     assert book["created_at"] == "2012-01-14T12:00:01+00:00"
-    test_client.delete(url="/books")
 
 
 @pytest.mark.parametrize(

@@ -23,4 +23,3 @@ def test_books_and_200_http_status_should_be_returned_when_books_have_been_creat
     created_books = response.json()
     assert response.status_code == 200
     assert created_books == [create_response.json()]
-    test_client.delete(url="/books")
