@@ -1,0 +1,42 @@
+parameters:
+  - name: jobName
+    type: string
+
+  - name: jobDependsOn
+    type: object
+    default: []
+
+  - name: dockerContainerRegistry
+    type: string
+
+  - name: dockerRepository
+    type: string
+
+  - name: dockerPath
+    type: string
+
+  - name: dockerTag
+    type: string
+    default: '$(Build.BuildId)'
+
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    dependsOn: ${{ parameters.jobDependsOn }}
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: Docker@2
+        displayName: 'Login to DockerHub'
+        inputs:
+          containerRegistry: ${{ parameters.dockerContainerRegistry }}
+          command: login
+
+      - task: Docker@2
+        displayName: "Build and push image"
+        inputs:
+          containerRegistry: ${{ parameters.dockerContainerRegistry }}
+          command: 'buildAndPush'
+          repository: ${{ parameters.dockerRepository }}
+          Dockerfile: ${{ parameters.dockerPath }}
+          tags: ${{ parameters.dockerTag }}

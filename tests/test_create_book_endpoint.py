@@ -16,7 +16,7 @@ def test_book_should_be_created_and_201_http_status_returned_when_payload_is_cor
         url="/books",
         json=correct_book_payload.dict(),
     )
-    assert response.status_code == 202
+    assert response.status_code == 201
     book = response.json()
     assert book["title"] == correct_book_payload.title
     assert book["author"] == correct_book_payload.author

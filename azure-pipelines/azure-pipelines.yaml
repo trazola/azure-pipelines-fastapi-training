@@ -6,3 +6,19 @@ trigger:
 
 stages:
   - template: template/testing-strategy.yaml
+
+  - stage: 'BuildImages'
+    condition: |
+      and(
+        succeeded(),
+        in(variables['Build.SourceBranch'], 'master', 'main')
+      )
+    dependsOn: ['TestingStrategy']
+    jobs:
+      - template: template/build-docker-image.yaml
+        parameters:
+          jobName: 'BuildBaseImage'
+          dockerContainerRegistry: 'ing-training'
+          dockerRepository: 'trazola/generic_images'
+          dockerPath: 'dockerfiles/base.Dockerfile'
+          dockerTag: 'python3.11-slim-bullseye'
