@@ -81,6 +81,7 @@ stages:
                     namespace: ${{ parameters.kubernetesNamespace }}
                     install: true
                     arguments: '--wait'
+
             deploy:
               steps:
                 - download: none
