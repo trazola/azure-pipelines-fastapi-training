@@ -22,3 +22,11 @@ stages:
           dockerRepository: 'trazola/generic_images'
           dockerPath: 'dockerfiles/base.Dockerfile'
           dockerTag: 'python3.11-slim-bullseye'
+
+      - template: template/build-docker-image.yaml
+        parameters:
+          jobName: 'BuildAppImage'
+          dockerContainerRegistry: 'ing-training'
+          dockerRepository: 'trazola/books'
+          dockerPath: 'dockerfiles/Dockerfile'
+          jobDependsOn: ['BuildBaseImage']
