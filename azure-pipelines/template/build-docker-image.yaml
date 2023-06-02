@@ -19,6 +19,10 @@ parameters:
     type: string
     default: '$(Build.BuildId)'
 
+  - name: dockerBuildContext
+    type: string
+    default: "."
+
 
 jobs:
   - job: ${{ parameters.jobName }}
@@ -40,3 +44,4 @@ jobs:
           repository: ${{ parameters.dockerRepository }}
           Dockerfile: ${{ parameters.dockerPath }}
           tags: ${{ parameters.dockerTag }}
+          buildContext: ${{ parameters.dockerBuildContext }}
