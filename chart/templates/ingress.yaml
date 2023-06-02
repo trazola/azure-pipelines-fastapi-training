@@ -7,7 +7,7 @@ metadata:
     module: {{ .Chart.Name }}
     env: {{ .Values.application.env }}
   annotations:
-    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
 spec:
   rules:
     - host: {{ .Values.application.domain }}

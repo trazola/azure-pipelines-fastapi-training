@@ -80,7 +80,7 @@ stages:
                     releaseName: 'ingress-nginx-${{ lower(parameters.env) }}'
                     namespace: ${{ parameters.kubernetesNamespace }}
                     install: true
-                    arguments: '--wait'
+                    arguments: '--wait --set controller.ingressClass=nginx-${{ lower(parameters.env) }} --set controller.name=controller${{ lower(parameters.env) }}'
 
             deploy:
               steps:

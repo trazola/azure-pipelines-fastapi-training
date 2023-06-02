@@ -47,3 +47,6 @@ deployment:
     timeoutSeconds: 4
     failureThreshold: 30
     periodSeconds: 10
+
+ingress:
+  class: nginx-staging
